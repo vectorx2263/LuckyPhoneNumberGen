@@ -1,0 +1,218 @@
+<html>
+
+<head>
+    <title>Lucky Phone Number Generator</title>
+</head>
+
+<body>
+    <h1>Lucky Phone Number Generator</h1>
+    <h3>Generated Number : <input type="text" readonly id="output" /></h3>
+    <p id="description"></p>
+    <form id="options-form">
+        <p>Select starting number :
+            <select name="starting" id="starting">
+            <option value="08">08</option>
+            <option value="09">09</option>
+        </select>
+        </p>
+        <p>
+            Not include these numbers : <br>
+            <input type="checkbox" name="badnum" value="1" id="1"> 1
+            <input type="checkbox" name="badnum" value="2" id="2"> 2
+            <input type="checkbox" name="badnum" value="3" id="3"> 3
+            <input type="checkbox" name="badnum" value="4" id="4"> 4
+            <input type="checkbox" name="badnum" value="5" id="5"> 5
+            <input type="checkbox" name="badnum" value="6" id="6"> 6
+            <input type="checkbox" name="badnum" value="7" id="7"> 7
+            <input type="checkbox" name="badnum" value="8" id="8"> 8
+            <input type="checkbox" name="badnum" value="9" id="9"> 9
+        </p>
+        <p>Select your category :
+            <select name="category" id="category">
+            <option value="Work">Work</option>
+            <option value="Love">Love</option>
+            <option value="Wealth">Wealth</option>
+            <option value="Merchandising">Merchandising</option>
+            <option value="Technology">Technology</option>
+            <option value="Education/Wiseness">Education/Wiseness</option>
+        </select>
+        </p>
+    </form>
+
+    <script type="application/javascript">
+        var form = document.getElementById("options-form");
+        form.addEventListener('change', calculate);
+
+        var output = document.getElementById("output");
+        var startingnum = document.getElementById("starting");
+        var category = document.getElementById("category");
+
+        function calculate() {
+            console.log("form changed");
+            if (startingnum.value == "08") {
+                output.value = "08";
+                output.value += generateNnum(8);
+            } else {
+                output.value = "09";
+                output.value += generateNnum(8);
+            }
+
+            var one = document.getElementById("1").checked;
+            var two = document.getElementById("2").checked;
+            var three = document.getElementById("3").checked;
+            var four = document.getElementById("4").checked;
+            var five = document.getElementById("5").checked;
+            var six = document.getElementById("6").checked;
+            var seven = document.getElementById("7").checked;
+            var eight = document.getElementById("8").checked;
+            var nine = document.getElementById("9").checked;
+
+            var dontwantNum = new Array();
+
+            if (one) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("1");
+                //console.log("changed to " + output.value);
+            }
+            if (two) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("2");
+                //console.log("changed to " + output.value);
+            }
+            if (three) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("3");
+                //console.log("changed to " + output.value);
+            }
+            if (four) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("4");
+                //console.log("changed to " + output.value);
+            }
+            if (five) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("5");
+                //console.log("changed to " + output.value);
+            }
+            if (six) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("6");
+                //console.log("changed to " + output.value);
+            }
+            if (seven) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("7");
+                //console.log("changed to " + output.value);
+            }
+            if (eight) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("8");
+                //console.log("changed to " + output.value);
+            }
+            if (nine) {
+                //console.log("don't want 1 with " + output.value);
+                dontwantNum.push("9");
+                //console.log("changed to " + output.value);
+            }
+            output.value = replaceNum(output.value, dontwantNum);
+            //console.log(replaceNum(output.value, dontwantNum));
+
+            var WorkNum = [45, 46, 78, 87, 39, 93, 56];
+            var LoveNum = [32, 24, 62, 36, 63, 69, 96];
+            var WealthNum = [28, 82, 45, 54, 65, 56, 78];
+            var MerchandisingNum = [44, 22, 41, 16, 61, 26, 42];
+            var TechnologyNum = [98, 89, 99, 59, 95, 91, 19];
+            var EducationNum = [15, 51, 14, 41, 55, 39, 23];
+
+            switch (category.value) {
+                case "Work":
+                    var getNum = WorkNum[Math.floor(Math.random() * WorkNum.length)];
+                    output.value = putLuckyNum(output.value, getNum);
+                    break;
+                case "Love":
+                    var getNum = LoveNum[Math.floor(Math.random() * LoveNum.length)];
+                    output.value = putLuckyNum(output.value, getNum);
+                    break;
+                case "Wealth":
+                    var getNum = WealthNum[Math.floor(Math.random() * WealthNum.length)];
+                    output.value = putLuckyNum(output.value, getNum);
+                    break;
+                case "Merchandising":
+                    var getNum = MerchandisingNum[Math.floor(Math.random() * MerchandisingNum.length)];
+                    output.value = putLuckyNum(output.value, getNum);
+                    break;
+                case "Technology":
+                    var getNum = TechnologyNum[Math.floor(Math.random() * TechnologyNum.length)];
+                    output.value = putLuckyNum(output.value, getNum);
+                    break;
+                case "Education/Wiseness":
+                    var getNum = EducationNum[Math.floor(Math.random() * EducationNum.length)];
+                    output.value = putLuckyNum(output.value, getNum);
+                    break;
+            }
+            description.innerHTML = "This phone number contains " + getNum + " which is the number in category of " + category.value;
+        }
+
+        function generateNnum(n) {
+            var output = "";
+            for (var i = 0; i < n; i++) {
+                output += Math.floor(Math.random() * 10);
+            }
+            return output;
+        }
+
+        function replaceNum(number, n) {
+            var numberlength = number.toString().length;
+            for (var i = 2; i < numberlength; i++) {
+                if (n.includes(number[i])) {
+                    console.log("Noooo");
+                    number = replaceAt(number, i, dontGetN(n));
+                    console.log(number);
+                }
+            }
+            return number;
+        }
+
+        function replaceAt(string, index, replace) {
+            return string.substring(0, index) + replace + string.substring(index + 1);
+        }
+
+        function dontGetN(n) {
+            var num;
+            do {
+                num = Math.floor(Math.random() * 10);
+            } while (n.includes(num.toString()));
+            return num;
+        }
+
+        function generateNnumSpecial(n, inc) {
+            var output = "";
+            var inclength = inc.toString().length;
+            for (var i = 0; i < n - inclength; i++) {
+                output += Math.floor(Math.random() * 10);
+            }
+            //console.log(output);
+            var index = Math.floor(Math.random() * output.length);
+            output = [output.slice(0, index), inc, output.slice(index)].join('');
+            return output;
+        }
+
+        function putLuckyNum(n, lucky) {
+            var output = "";
+            var first2digits = n.slice(0, 2);
+            var last8digits = n.slice(2, 10);
+            console.log(first2digits + "|" + last8digits);
+            var index = Math.floor(Math.random() * 7);
+            console.log(index + " " + last8digits + " " + lucky);
+            output = replaceAt(last8digits, index, lucky.toString()[0]);
+            console.log(output);
+            output = replaceAt(output, index + 1, lucky.toString()[1]);
+            console.log(output);
+            return first2digits + output;
+        }
+
+        calculate();
+    </script>
+</body>
+
+</html>

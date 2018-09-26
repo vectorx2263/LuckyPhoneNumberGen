@@ -1,0 +1,310 @@
+<html>
+
+<head>
+    <title>Lucky Phone Number Generator</title>
+    <style>
+        .error-txt {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Lucky Phone Number Generator</h1>
+    <h3>Generated Number : <span id="output"></span></h3>
+    <p id="description"></p>
+    <form id="options-form">
+        <p>Select starting number :
+            <select name="starting" id="starting">
+            <option value="08">08</option>
+            <option value="09">09</option>
+        </select>
+        </p>
+        <p>
+            Not include these numbers : <br>
+            <input type="checkbox" name="badnum" value="1" id="1"> 1
+            <input type="checkbox" name="badnum" value="2" id="2"> 2
+            <input type="checkbox" name="badnum" value="3" id="3"> 3
+            <input type="checkbox" name="badnum" value="4" id="4"> 4
+            <input type="checkbox" name="badnum" value="5" id="5"> 5
+            <input type="checkbox" name="badnum" value="6" id="6"> 6
+            <input type="checkbox" name="badnum" value="7" id="7"> 7
+            <input type="checkbox" name="badnum" value="8" id="8"> 8
+            <input type="checkbox" name="badnum" value="9" id="9"> 9
+        </p>
+        <p>Select your category :
+            <select name="category" id="category">
+            <option value="Work">Work</option>
+            <option value="Love">Love</option>
+            <option value="Wealth">Wealth</option>
+            <option value="Merchandising">Merchandising</option>
+            <option value="Technology">Technology</option>
+            <option value="Education/Wiseness">Education/Wiseness</option>
+        </select>
+        </p>
+    </form>
+    <button onclick="calculate()">Re-Generate</button>
+
+    <script type="application/javascript">
+        var form = document.getElementById("options-form");
+        form.addEventListener('change', calculate);
+
+        var output = document.getElementById("output");
+        var startingnum = document.getElementById("starting");
+        var category = document.getElementById("category");
+        var generatedNum = new Array();
+
+        var WorkNum = [
+            [4, 5],
+            [4, 6],
+            [7, 8],
+            [8, 7],
+            [3, 9],
+            [9, 3],
+            [5, 6]
+        ];
+        var LoveNum = [
+            [3, 2],
+            [2, 4],
+            [6, 2],
+            [3, 6],
+            [6, 3],
+            [6, 9],
+            [9, 6]
+        ];
+        var WealthNum = [
+            [2, 8],
+            [8, 2],
+            [4, 5],
+            [5, 4],
+            [6, 5],
+            [5, 6],
+            [7, 8]
+        ];
+        var MerchandisingNum = [
+            [4, 4],
+            [2, 2],
+            [4, 1],
+            [1, 6],
+            [6, 1],
+            [2, 6],
+            [4, 2]
+        ];
+        var TechnologyNum = [
+            [9, 8],
+            [8, 9],
+            [9, 9],
+            [5, 9],
+            [9, 5],
+            [9, 1],
+            [1, 9]
+        ];
+        var EducationNum = [
+            [1, 5],
+            [5, 1],
+            [1, 4],
+            [4, 1],
+            [5, 5],
+            [3, 9],
+            [2, 3]
+        ];
+
+        function calculate() {
+            generatedNum = new Array();
+            output.className = "";
+            description.className = "";
+            console.log("form changed");
+            if (startingnum.value == "08") {
+                generatedNum.push("0");
+                generatedNum.push("8");
+            } else {
+                generatedNum.push("0");
+                generatedNum.push("9");
+            }
+            console.log(generatedNum);
+
+            var one = document.getElementById("1").checked;
+            var two = document.getElementById("2").checked;
+            var three = document.getElementById("3").checked;
+            var four = document.getElementById("4").checked;
+            var five = document.getElementById("5").checked;
+            var six = document.getElementById("6").checked;
+            var seven = document.getElementById("7").checked;
+            var eight = document.getElementById("8").checked;
+            var nine = document.getElementById("9").checked;
+
+            var dontwantNum = new Array();
+
+            if (one) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(1);
+                //console.log("changed to " + output.innerHTML);
+            }
+            if (two) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(2);
+                //console.log("changed to " + output.innerHTML);
+            }
+            if (three) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(3);
+                //console.log("changed to " + output.innerHTML);
+            }
+            if (four) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(4);
+                //console.log("changed to " + output.innerHTML);
+            }
+            if (five) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(5);
+                //console.log("changed to " + output.innerHTML);
+            }
+            if (six) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(6);
+                //console.log("changed to " + output.innerHTML);
+            }
+            if (seven) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(7);
+                //console.log("changed to " + output.innerHTML);
+            }
+            if (eight) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(8);
+                //console.log("changed to " + output.innerHTML);
+            }
+            if (nine) {
+                //console.log("don't want 1 with " + output.innerHTML);
+                dontwantNum.push(9);
+                //console.log("changed to " + output.innerHTML);
+            }
+            //console.log(replaceNum(output.innerHTML, dontwantNum));
+
+            generatePhoneNum(dontwantNum, category.value)
+        }
+
+        function generatePhoneNum(dontWantNum, category) {
+            var availableLuckeyNum;
+            var ranLuc;
+            console.log(category);
+            switch (category) {
+                case "Work":
+                    console.log(dontWantNum);
+                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
+                    console.log(availableLuckeyNum);
+                    if (availableLuckeyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
+                        console.log("Lucky number is " + availableLuckeyNum[ranLuc]);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    } else {
+                        output.innerHTML = "Cannot generate phone number";
+                    }
+                    break;
+                case "Love":
+                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
+                    if (availableLuckeyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    } else {
+                        output.innerHTML = "Cannot generate phone number";
+                    }
+                    break;
+                case "Wealth":
+                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
+                    if (availableLuckeyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    } else {
+                        output.innerHTML = "Cannot generate phone number";
+                    }
+                    break;
+                case "Merchandising":
+                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
+                    if (availableLuckeyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    } else {
+                        output.innerHTML = "Cannot generate phone number";
+                    }
+                    break;
+                case "Technology":
+                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
+                    if (availableLuckeyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    } else {
+                        output.innerHTML = "Cannot generate phone number";
+                    }
+                    break;
+                case "Education/Wiseness":
+                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
+                    if (availableLuckeyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    } else {
+                        output.innerHTML = "Cannot generate phone number";
+                    }
+                    break;
+            }
+            if (output.innerHTML == "Cannot generate phone number") {
+                description.innerHTML = "Please uncheck some exclude number(s) and try again!";
+                output.className = "error-txt";
+                description.className = "error-txt";
+            } else {
+                description.innerHTML = "This phone number contains " + availableLuckeyNum[ranLuc].join("") + " which is the number in category of " + category;
+            }
+        }
+
+        function remNumfromArray(array, dontwant) {
+            var result = Array();
+            for (var i = 0; i < array.length; i++) {
+                if (array[i].filter(value => -1 !== dontwant.indexOf(value)).length == 0) {
+                    result.push(array[i]);
+                }
+            }
+            return result;
+        }
+
+        function genExcludeNum(excludeArray) {
+            var num;
+            do {
+                num = Math.floor(Math.random() * 10);
+            } while (excludeArray.includes(num.toString()));
+            return num;
+        }
+
+        function generateNumWLuckyNum(array, Luckyarray, dontwantArray) {
+            //random index to put 0-7
+            var index = Math.floor(Math.random() * 8);
+            for (var i = 0; i < 7; i++) {
+                if (i == index) {
+                    array.push(Luckyarray[0]);
+                    array.push(Luckyarray[1]);
+                } else {
+                    array.push(genExcludeNum(dontwantArray));
+                }
+            }
+            return array.join("");
+        }
+
+        /*function putLuckyNum(n, lucky) {
+            var output = "";
+            var first2digits = n.slice(0, 2);
+            var last8digits = n.slice(2, 10);
+            console.log(first2digits + "|" + last8digits);
+            var index = Math.floor(Math.random() * 7);
+            console.log(index + " " + last8digits + " " + lucky);
+            output = replaceAt(last8digits, index, lucky.toString()[0]);
+            console.log(output);
+            output = replaceAt(output, index + 1, lucky.toString()[1]);
+            console.log(output);
+            return first2digits + output;
+        }*/
+
+        calculate();
+    </script>
+</body>
+
+</html>

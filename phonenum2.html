@@ -46,14 +46,19 @@
     <button onclick="calculate()">Re-Generate</button>
 
     <script type="application/javascript">
+        //decalre element pointer
         var form = document.getElementById("options-form");
+
+        //onformchange > run function calculate
         form.addEventListener('change', calculate);
 
         var output = document.getElementById("output");
         var startingnum = document.getElementById("starting");
         var category = document.getElementById("category");
+        //declare generate phone number and set to empty
         var generatedNum = new Array();
 
+        //declare all lucky number in array type
         var WorkNum = [
             [4, 5],
             [4, 6],
@@ -109,20 +114,27 @@
             [2, 3]
         ];
 
+        //function calculate for control overall function
         function calculate() {
+            //reset generated phone number to be empty if there are some generated
             generatedNum = new Array();
+            //reset classname if previous generate occur error
             output.className = "";
             description.className = "";
-            console.log("form changed");
+            //console.log("form changed");
+            //check if starting num is equal to what ?
             if (startingnum.value == "08") {
+                //push that number into generatedNum array
                 generatedNum.push("0");
                 generatedNum.push("8");
             } else {
+                //push that number into generatedNum array
                 generatedNum.push("0");
                 generatedNum.push("9");
             }
-            console.log(generatedNum);
+            //console.log(generatedNum);
 
+            //declare checkbox pointer
             var one = document.getElementById("1").checked;
             var two = document.getElementById("2").checked;
             var three = document.getElementById("3").checked;
@@ -133,8 +145,10 @@
             var eight = document.getElementById("8").checked;
             var nine = document.getElementById("9").checked;
 
+            //declare dontwantNum array that will contains exclude number
             var dontwantNum = new Array();
 
+            //check each checkbox individually if checked so push that number into dontwantNum array
             if (one) {
                 //console.log("don't want 1 with " + output.innerHTML);
                 dontwantNum.push(1);
@@ -182,84 +196,109 @@
             }
             //console.log(replaceNum(output.innerHTML, dontwantNum));
 
+            //finally we'll get dontwantNum array like [1,3,5] for exclude 1 3 5 number
+
+            //call function generatePhoneNum to generate 8 digits left
+            //pass exclude number, category into this function.
             generatePhoneNum(dontwantNum, category.value)
         }
 
+        //generate phone number takes dontWantNum to be the number that will exclude and category.
         function generatePhoneNum(dontWantNum, category) {
-            var availableLuckeyNum;
+            //declare variable for keep LuckyNum that available after deleted by exclude numbers.
+            var availableLuckyNum;
+            //declare variable for keeping random index of availableLuckyNum;
             var ranLuc;
-            console.log(category);
+            //console.log(category);
+            //check category
             switch (category) {
                 case "Work":
-                    console.log(dontWantNum);
-                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
-                    console.log(availableLuckeyNum);
-                    if (availableLuckeyNum.length > 0) {
-                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
-                        console.log("Lucky number is " + availableLuckeyNum[ranLuc]);
-                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    //console.log(dontWantNum);
+                    //call function remNumfromArray to remove Lucky Number that contain some of exclude numbers and keep in availableLuckyNum.
+                    availableLuckyNum = remNumfromArray(WorkNum, dontWantNum);
+                    //console.log(availableLuckyNum);
+                    //check if there are some LuckyNum left?
+                    if (availableLuckyNum.length > 0) {
+                        //if yes so random number of those available LuckyNum.
+                        ranLuc = Math.floor(Math.random() * availableLuckyNum.length);
+                        //console.log("Lucky number is " + availableLuckyNum[ranLuc]);
+                        //call function generateNewWLuckyNum to generate 8 digits with Lucky Number in it and exclude numbers that doesn't want.
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckyNum[ranLuc], dontWantNum);
                     } else {
+                        //if there are no available Lucky Number left so tell the user that we can't generate phone number according to your settings.
                         output.innerHTML = "Cannot generate phone number";
                     }
                     break;
                 case "Love":
-                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
-                    if (availableLuckeyNum.length > 0) {
-                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
-                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    availableLuckyNum = remNumfromArray(LoveNum, dontWantNum);
+                    if (availableLuckyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckyNum[ranLuc], dontWantNum);
                     } else {
                         output.innerHTML = "Cannot generate phone number";
                     }
                     break;
                 case "Wealth":
-                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
-                    if (availableLuckeyNum.length > 0) {
-                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
-                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    availableLuckyNum = remNumfromArray(WealthNum, dontWantNum);
+                    if (availableLuckyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckyNum[ranLuc], dontWantNum);
                     } else {
                         output.innerHTML = "Cannot generate phone number";
                     }
                     break;
                 case "Merchandising":
-                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
-                    if (availableLuckeyNum.length > 0) {
-                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
-                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    availableLuckyNum = remNumfromArray(MerchandisingNum, dontWantNum);
+                    if (availableLuckyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckyNum[ranLuc], dontWantNum);
                     } else {
                         output.innerHTML = "Cannot generate phone number";
                     }
                     break;
                 case "Technology":
-                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
-                    if (availableLuckeyNum.length > 0) {
-                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
-                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    availableLuckyNum = remNumfromArray(TechnologyNum, dontWantNum);
+                    if (availableLuckyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckyNum[ranLuc], dontWantNum);
                     } else {
                         output.innerHTML = "Cannot generate phone number";
                     }
                     break;
                 case "Education/Wiseness":
-                    availableLuckeyNum = remNumfromArray(WorkNum, dontWantNum);
-                    if (availableLuckeyNum.length > 0) {
-                        ranLuc = Math.floor(Math.random() * availableLuckeyNum.length);
-                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckeyNum[ranLuc], dontWantNum);
+                    availableLuckyNum = remNumfromArray(EducationNum, dontWantNum);
+                    if (availableLuckyNum.length > 0) {
+                        ranLuc = Math.floor(Math.random() * availableLuckyNum.length);
+                        output.innerHTML = generateNumWLuckyNum(generatedNum, availableLuckyNum[ranLuc], dontWantNum);
                     } else {
                         output.innerHTML = "Cannot generate phone number";
                     }
                     break;
             }
+            //check if there is some error that can't generate phone number
             if (output.innerHTML == "Cannot generate phone number") {
+                //show description and put class error-txt to output and description text.
                 description.innerHTML = "Please uncheck some exclude number(s) and try again!";
                 output.className = "error-txt";
                 description.className = "error-txt";
             } else {
-                description.innerHTML = "This phone number contains " + availableLuckeyNum[ranLuc].join("") + " which is the number in category of " + category;
+                //else if there is no error so tell the user of lucky number and category in that phone number.
+                //we use .join("") to show array in term of string without comma like [1,2,3] => 123
+                description.innerHTML = "This phone number contains " + availableLuckyNum[ranLuc].join("") + " which is the number in category of " + category;
             }
         }
 
+        //exclude lucky number that contains some part of excluding number.
         function remNumfromArray(array, dontwant) {
+            //declare result array
             var result = Array();
+            //loop each member in lucky number array
             for (var i = 0; i < array.length; i++) {
+                //if that lucky number not contains any part of excluding number to push it to result array
+                //use .filter to filter array that contain excluding number
+                //filter by get only intersection of these 2 array
+                //check intersection by get each value in array and find the index of that value in dontwant array if there is some index (index != -1) so its intersec!
+                //if array that filtered have 0 length so that means there is no excluding number in it so we push that lucky number ro result array
                 if (array[i].filter(value => -1 !== dontwant.indexOf(value)).length == 0) {
                     result.push(array[i]);
                 }
@@ -267,25 +306,34 @@
             return result;
         }
 
+        //generate 1 random number without excluding number
         function genExcludeNum(excludeArray) {
             var num;
             do {
+                //random number 0-9
                 num = Math.floor(Math.random() * 10);
+                //if the random number is in excludeArray so re-generate it.
             } while (excludeArray.includes(num.toString()));
             return num;
         }
 
+        //generate 8 digits with luckynumber and exclude don't want number
         function generateNumWLuckyNum(array, Luckyarray, dontwantArray) {
-            //random index to put 0-7
+            //random index to put lucky number in 0-7
             var index = Math.floor(Math.random() * 8);
+            //loop 8 digits
             for (var i = 0; i < 7; i++) {
+                //if that digits is equal index that we want to put lucky number
                 if (i == index) {
+                    //so we push luckynumber into array
                     array.push(Luckyarray[0]);
                     array.push(Luckyarray[1]);
                 } else {
+                    //else call genExcludeNum that will generate number without including don't want number and push it to array.
                     array.push(genExcludeNum(dontwantArray));
                 }
             }
+            //finally we get 8 digits in terms of [1,2,3,4,5,6,7,8] and we use .join("") to convert it to String and remove commas => 12345678
             return array.join("");
         }
 
@@ -303,6 +351,7 @@
             return first2digits + output;
         }*/
 
+        //auto generate number when page is opened by calling calculate function.
         calculate();
     </script>
 </body>

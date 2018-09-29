@@ -203,7 +203,6 @@
             //call function generatePhoneNum to generate 8 digits left
             //pass exclude number, category into this function.
             generatePhoneNum(dontwantNum, category.value);
-            sumoutput.innerHTML = calculateSum(generatedNum);
         }
 
         //generate phone number takes dontWantNum to be the number that will exclude and category.
@@ -289,7 +288,37 @@
                 //we use .join("") to show array in term of string without comma like [1,2,3] => 123
                 description.innerHTML = "This phone number contains " + availableLuckyNum[ranLuc].join("") + " which is the number in category of " + category;
             }
-            adaptNum(generatedNum, availableLuckyNum[ranLuc].join(""), dontWantNum);
+            if(output.className != "error-txt") {
+                //if there is no error in calculating phone number with lucky number that not include dont want num
+                //initialize count to zero and final_num
+                var count = 0;
+                var final_num;
+                do {
+                    //use function adaptNum to manipulate number to have sum equal to lucky number and save in final_num
+                    final_num = adaptNum(generatedNum, availableLuckyNum[ranLuc].join(""), dontWantNum);
+                    console.log("final num returned "+final_num);
+                    //count increased
+                    count++;
+                //looping if final_num return null or undefined so that means there's some error to can't calculate that number
+                //but looping just 10 round...
+                }while(final_num == undefined && count < 10);
+                //if final_num is not undefined so this is means there are some answer
+                if(final_num != false && final_num != undefined && final_num.length == 10) {
+                        //just display and calculate sum of it
+                        console.log("FINAL NUM "+final_num);
+                        output.innerHTML = final_num.join("");
+                        sumoutput.innerHTML = calculateSum(final_num);
+                        return;
+                    } else {
+                        //else if beyond 10 round but still can't find number
+                        //just show an error
+                        output.innerHTML = "Cannot generate phone number";
+                        output.className = "error-txt";
+                        sumoutput.innerHTML = "0";
+                        description.innerHTML = "System can't generate the phone with sum of "+availableLuckyNum[ranLuc].join("")+", please try again!";
+                        description.className = "error-txt";
+                    }
+            }
         }
 
         //exclude lucky number that contains some part of excluding number.
@@ -341,6 +370,7 @@
             return array.join("");
         }
 
+        //access every members in array and calculate sum of that array
         function calculateSum(array) {
             var sum = 0;
             for (var i = 0; i < array.length; i++) {
@@ -349,45 +379,123 @@
             return sum;
         }
 
-        //check if all members of array is equal
+        //check if all members of array is equal like (1,1,1,1) (5,5,5)
         const allEqual = arr => arr.every(v => v === arr[0])
 
+        //manipulate phone number to have sum equal to lucky number
         function adaptNum(array, luckynumber, dontwantNum) {
             console.log(array);
+            //declare phoneSum to keep current total sum of phonenumber
             var phoneSum = calculateSum(array);
+            //print different between current sum with lucky number
             console.log(phoneSum + "vs" + luckynumber);
+            //available num is array that contains of number that we can use (number that not in dontwantnum array)
+            //filter this array by looking for index of each number in dontwantnum array
+            //if index is -1 so that's mean that number isn't in dontwantnum and we can use that number
             var availableNum = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(value => -1 == dontwantNum.indexOf(value));
+            //declare canEditNum that is the array of last 8 digits
             var canEditNum = array.slice(2, 10);
+            //find luckynumber index and keep in luckyIndex
             var luckyIndex = findLuckyIndex(array, luckynumber)
                 //console.log(canEditNum);
                 //console.log("LuckyIndex (" + luckynumber[0] + ") is " + luckyIndex);
                 //console.log("can edit num is " + canEditNum);
+            //update canEditNum to remove lucky number from array so that we will get array of 6 number that we can change it anyway
+            //without effecting starting number and lucky number
             canEditNum = canEditNum.slice(0, (luckyIndex)).concat(canEditNum.slice((luckyIndex + 2), (canEditNum.length)));
             console.log("can edit num is " + canEditNum);
             console.log("available num is " + availableNum);
+            //check if current phone number sum is greater than lucky number > so we must minus some digits to reduce the sum
             if (phoneSum > luckynumber) {
+                //find difference between current sum and lucky number
                 var diff = Math.abs(luckynumber - phoneSum);
-                console.log("Minus by " + diff);
+                //find available slot that we can manipulate our number to reach lucky number
+                var availableSlot = calculateSum(canEditNum);
+                console.log(diff + "/" + availableSlot);
+                //if available slot is less than diff so that is mean we can't find the way to reach lucky number
+                if(availableSlot < diff) {
+                    console.log("not enough available slot re-gen pls");
+                    //calculate();
+                    //just return null to make it recalculate all the number again.
+                    return;
+                } else {
+                    //else if available slot is less than difference so it's some way to reach lucky number!
+                    //initialize count and error set to 0
+                    var count=0;
+                    var error=0;
+                    //start the loop for manipulate some digits.
+                    do {
+                        //total remainder that we want to minus is diff
+                        console.log("Minus by "+diff);
+                        //find maximum number in canEditNum
+                        var maxIndex = canEditNum.indexOf(Math.max.apply(null, canEditNum));
+                        console.log("Max is [" + maxIndex + "] = " + canEditNum[maxIndex]);
+                        //initialize minus to keep number that we must minus digit with this number
+                        var minus = 0;
+                        //if difference is more than 9
+                        if(diff > 9) {
+                            //minus by itself to make it become 0 Ex.9-9 = 0
+                            minus = canEditNum[maxIndex];
+                            console.log("minus @ ["+maxIndex+"] with "+minus);
+                        } else {
+                            //else if diff is less than 9
+                            //check if we minus maximum number with diff is less than 0 or not if yes
+                            if((canEditNum[maxIndex] - diff) < 0) {
+                                //we set minus number to itself
+                                minus = canEditNum[maxIndex];
+                            } else {
+                                //if not so we can minus that digit with difference without let them being negative number
+                                minus = diff;
+                            }
+                            console.log("minus @ ["+maxIndex+"] with "+minus);
+                        }
+                        //minus that digit with minus
+                        canEditNum[maxIndex] -= minus;
+                        //decrease difference
+                        diff = diff - minus;
+                        //increase count
+                        count++;
+                        console.log(canEditNum);
+                        //if we do until all array is same number (like 080-000-0000) but it's still some difference so we cannot make this happen anymore
+                        if (allEqual(canEditNum)) {
+                            //just put error=1 and break loop
+                            console.log("Can't do this regen pls");
+                            error = 1;
+                            break;
+                        }
+                    //looping until diff 0 or count morethan 50
+                    }while(diff > 0 && count < 50);
+                    //if error = 1 so we return null to find all new phone number
+                    if(error == 1) {
+                        //calculate();
+                        return;
+                    }
+                }
+                //console.log("Minus by " + diff);
                 /*
                 DO MINUS OPERATION HERE
                 */
+            //same logic as above but instead of minus we add it instead
+            //check if current phone sum is less than lucky number (so we must add it)
             } else if (phoneSum < luckynumber) {
                 var diff = Math.abs(luckynumber - phoneSum);
                 var availableSlot = findAvailableSlot(canEditNum);
                 console.log(diff + "/" + availableSlot);
                 if (availableSlot < diff) {
                     console.log("not enough available slot re-gen pls");
-                    calculate();
-                    return false;
+                    //calculate();
+                    return;
                 } else {
                     var count = 0;
                     var error = 0;
                     do {
                         console.log("Total add by " + diff);
+                        //instead of finding maximum number to minus > we find minimum number to add.
                         var minIndex = canEditNum.indexOf(Math.min.apply(null, canEditNum));
                         console.log("Min is [" + minIndex + "] = " + canEditNum[minIndex]);
                         var add = 0;
                         if (diff > 9) {
+                            //add with maximum number that make it become 9
                             add = 9 - canEditNum[minIndex];
                             console.log("Added with " + add);
                         } else {
@@ -409,29 +517,44 @@
                         }
                     } while (diff > 0 && count < 50);
                     if (error == 1) {
-                        calculate();
-                        return false;
+                        //calculate();
+                        return;
                     }
                 }
             }
 
+            //after get total sum next find exclude number and removed by calling remExcludeFromAdaptedNum
+            canEditNum = remExcludeFromAdaptedNum(canEditNum, dontwantNum);
+            //if called and return null so we return null too for finding all new phone number
+            if(canEditNum == undefined) {
+                return;
+            }
+
+            //if not null so that's the way! we just put them together again (at first we sliced it to last 8 digits and removed lucky number)
             var adaptedNum = Array();
+            //push first 2 starting number
             adaptedNum.push(array[0]);
             adaptedNum.push(array[1]);
             var j = 0;
+            //looping 8 digits and put number back
             for (var i = 0; i < 7; i++) {
+                //if reach lucky number index just put lucky number to it.
                 if (i == luckyIndex) {
                     adaptedNum.push(parseInt(luckynumber[0]));
                     adaptedNum.push(parseInt(luckynumber[1]));
                 } else {
+                    //else just push number from canEditNum that we manipulate sum of it already
                     adaptedNum.push(canEditNum[j]);
                     j++;
                 }
             }
+            //yay! we've got final result so return it!
             console.log("Final result " + adaptedNum);
-            remExcludeFromAdaptedNum(adaptedNum, dontwantNum);
+            return adaptedNum;
+            /* change location of function called just put canEditNum into this function and dontwantNum and manipulate with them */
         }
 
+        //find all available slot by access all member of array and minus 9 with all members to find all available slot to manipulate.
         function findAvailableSlot(array) {
             var slot = 0;
             for (var i = 0; i < array.length; i++) {
@@ -440,30 +563,86 @@
             }
             return slot;
         }
-
+        
+        //remove exclude number from adapted number (number that got sum = lucky number)
         function remExcludeFromAdaptedNum(array, dontwantnum) {
             console.log(array);
+            //initialize remainder to 0
             var remainder = 0;
+            //access every member in array
             for (var i = 0; i < array.length; i++) {
+                //check that if there are some member that in dontwant number?
                 if (dontwantnum.includes(array[i])) {
+                    //if yes! just minus it by 1
                     do {
-                        array[i] = array[i] - 1;
-                        remainder++;
+                        //check first if we minus it and it will not become negative!
+                        if((array[i]-1) > 0) {
+                            //yes minus it!
+                            array[i] = array[i] - 1;
+                            //also increase remainder because we gonna put these remainder back to phone number somewhere
+                            remainder++;
+                        } else {
+                            //if cannot minus just break out from loop
+                            break;
+                        }
+                    //loop until that number is not in dontwantnum array
                     } while (dontwantnum.includes(array[i]));
                 }
             }
-            console.log("reduce dontwantnum = " + array);
+            //just show array after reduced some digits
+            console.log("reduced dontwantnum = " + array);
+            //show remainder
             console.log("remainder " + remainder);
-            if (findAvailableSlot(array) < remainder) {
-                console.log("cannot put remainder to array");
-                calculate();
-                return false;
+            //if remainder is equal 0 so we don't need to do anything just return that array back!
+            if(remainder == 0) {
+                console.log("no exclude num found in array, just skipped it!");
+                return array;
             } else {
-                console.log("there is some way");
-                /* FIND THE WAY TO PUT REMAINDER BACK TO ARRAY WITHOUT BEING EXCLUDE NUMBER */
+                //else let's do something
+                //check available slot first, is that suitable for remainder ?
+                if (findAvailableSlot(array) < remainder) {
+                    //if not just return null and find all new number
+                    console.log("cannot put remainder to array");
+                    //calculate();
+                    return;
+                } else {
+                    //if not... there is some way!
+                    console.log("there is some way");
+                    /* FIND THE WAY TO PUT REMAINDER BACK TO ARRAY WITHOUT BEING EXCLUDE NUMBER */
+                    //loop every member
+                    for(var i=0;i<array.length;i++){
+                        //try to add that number with all remainder if it beyond less than 9?
+                        if(array[i]+remainder <= 9) {
+                            //if less than 9 so we can add it! next.. check if we added and it equal to dont want number ?
+                            if(!dontwantnum.includes(array[i]+remainder)) {
+                                //if not.. so we can add it!
+                                console.log("We're adding "+remainder+" to "+array[i]);
+                                //add it and reset remainder to 0
+                                array[i] += remainder;
+                                remainder = 0;
+                                break;
+                            } else {
+                                //else if can't added just try with to next member
+                                console.log("Added but in exclude!");
+                                continue;
+                            }
+                        }
+                    }
+                    //if try with all members but still have some remainder... so there is no way... just return nulled and find all new number again.
+                    if(remainder != 0) {
+                        console.log("Cannot find that way... re-gen pls");
+                        //calculate();
+                        return;
+                    } else {
+                        //else remainder == 0 so that's answer! just return that array
+                        console.log("Excluded number from array "+array);
+                        return array;
+                    }
+                }
             }
         }
 
+        //find lucky index by accessing all member in arrays and check if that index is equal to first lucky number and also next index.
         function findLuckyIndex(array, luckyNum) {
             var index;
             for (var i = 0; i < array.length; i++) {
@@ -474,20 +653,6 @@
             }
             return (index - 2);
         }
-
-        /*function putLuckyNum(n, lucky) {
-            var output = "";
-            var first2digits = n.slice(0, 2);
-            var last8digits = n.slice(2, 10);
-            console.log(first2digits + "|" + last8digits);
-            var index = Math.floor(Math.random() * 7);
-            console.log(index + " " + last8digits + " " + lucky);
-            output = replaceAt(last8digits, index, lucky.toString()[0]);
-            console.log(output);
-            output = replaceAt(output, index + 1, lucky.toString()[1]);
-            console.log(output);
-            return first2digits + output;
-        }*/
 
         //auto generate number when page is opened by calling calculate function.
         calculate();
